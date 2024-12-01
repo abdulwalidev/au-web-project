@@ -3,22 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Images</title>
+    <title>SpDumP - Upload Images</title>
+    <style>
+        /* General styling */
+        * {
+            font-family: 'Courier New', Courier, monospace;
+            color: black;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #87CEEB; /* Sky blue background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header styling */
+        .header {
+            background-color: black;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .Homepagelogo {
+            color: white;
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* Main container styling */
+        .main-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Your Images</h1>
+    <div class="header">
+        <a href="index.html" class="Homepagelogo">SpDumP</a>
+    </div>
 
-    <!-- File upload form -->
-    <input type="file" id="file-upload" multiple>
-    <button id="upload-btn">Upload Files</button>
+    <div class="main-container">
+        <h1>Upload Your Images</h1>
 
-    <!-- Success or Error Message -->
-    <div id="message"></div>
+        <!-- File upload form -->
+        <input type="file" id="file-upload" multiple>
+        <button id="upload-btn">Upload Files</button>
+
+        <!-- Success or Error Message -->
+        <div id="message"></div>
+    </div>
 
     <!-- Include AWS SDK -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1317.0.min.js"></script>
 
     <!-- Load the script at the bottom for better performance -->
-    <script src="upload.js"></script>
+    <script>
+        // AWS Configuration
+        AWS.config.update({
+            accessKeyId: "AKIARZDBH42I2OTFPC72",
+            secretAccessKey: "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",
+            region: "us-east-2"
+        });
+
+        const s3 = new AWS.S3();
+
+        // DOM Elements
+        const fileInput = document.getElementById("file-upload");
+        const uploadButton = document.getElementById("upload-btn");
+        const messageDiv = document.getElementById("message");
+
+        uploadButton.addEventListener("click", () => {
+            const files = fileInput.files;
+            if (!files.length) {
+                messageDiv.textContent = "Please select files to upload.";
+                messageDiv.style.color = "red";
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const params = {
+                    Bucket: "gallory",
+                    Key: file.name,
+                    Body: file,
+                    ContentType: file.type
+                };
+
+                s3.upload(params, (err, data) => {
+                    if (err) {
+                        messageDiv.textContent = "Error uploading files. Check console for details.";
+                        messageDiv.style.color = "red";
+                        console.error("Upload error:", err);
+                    } else {
+                        messageDiv.textContent = "Files uploaded successfully!";
+                        messageDiv.style.color = "green";
+                        console.log("Upload success:", data);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
