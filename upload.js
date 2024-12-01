@@ -1,8 +1,10 @@
 // Include the AWS SDK (Ensure you have included the AWS SDK script in your HTML file)
 AWS.config.update({
   region: 'us-east-2', // Your AWS region
-  accessKeyId: 'AKIARHQBNKIKQQCWOOAE', // Use your AWS Access Key
-  secretAccessKey: 'XRIfIuhz66qwzBOsXhqi7h6uVfruWklUUgAVGUHv' // Use your AWS Secret Key
+  credentials: new AWS.Credentials({
+    accessKeyId: 'AKIARHQBNKIKQQCWOOAE', // Your AWS Access Key
+    secretAccessKey: 'XRIfIuhz66qwzBOsXhqi7h6uVfruWklUUgAVGUHv' // Your AWS Secret Key
+  })
 });
 
 // S3 Bucket configuration
