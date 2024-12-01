@@ -1,53 +1,52 @@
-// Include the AWS SDK (Ensure you have included the AWS SDK script in your HTML file)
-AWS.config.update({
-  region: 'us-east-2', // Your AWS region
-  credentials: new AWS.Credentials({
-    accessKeyId: 'AKIARHQBNKIKQQCWOOAE', // Your AWS Access Key
-    secretAccessKey: 'XRIfIuhz66qwzBOsXhqi7h6uVfruWklUUgAVGUHv' // Your AWS Secret Key
-  })
-});
-
-// S3 Bucket configuration
-var bucketName = 'au-web-project-photoupload';
-var bucketRegion = 'us-east-2'; // Ensure this matches the region of your S3 bucket
-var bucket = new AWS.S3({
-  params: { Bucket: bucketName },
-  region: bucketRegion
-});
-
-// Handle file upload
-function handleFileUpload(event) {
-  var files = event.target.files;
-  if (files.length === 0) {
-    alert('No files selected');
-    return;
-  }
-
-  // Loop through each file and upload it
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    var fileName = file.name;
-    var fileType = file.type;
-
-    var params = {
-      Key: fileName, // Use the file name as the S3 key
-      ContentType: fileType,
-      Body: file,
-      ACL: 'public-read' // Make the file public
-    };
-
-    // Upload the file to S3
-    bucket.putObject(params, function(err, data) {
-      if (err) {
-        console.log('Error uploading file:', err);
-        alert('Error uploading file: ' + err.message);
-      } else {
-        console.log('File uploaded successfully:', data);
-        alert('File uploaded successfully');
-      }
+document.addEventListener('DOMContentLoaded', function () {
+    // AWS S3 Config
+    AWS.config.update({
+        region: 'us-east-2', // Your AWS region
+        accessKeyId: 'AKIARHQBNKIKQQCWOOAE', // Your AWS Access Key
+        secretAccessKey: 'XRIfIuhz66qwzBOsXhqi7h6uVfruWklUUgAVGUHv' // Your AWS Secret Key
     });
-  }
-}
 
-// Add event listener for file input
-document.getElementById('file-upload').addEventListener('change', handleFileUpload);
+    // Create an S3 service object
+    const s3 = new AWS.S3();
+
+    // Select the file input and upload button
+    const fileInput = document.getElementById('file-upload');
+    const uploadBtn = document.getElementById('upload-btn');
+    const messageDiv = document.getElementById('message');
+
+    // Button click event
+    uploadBtn.addEventListener('click', function () {
+        const files = fileInput.files;
+
+        // Check if files are selected
+        if (files.length === 0) {
+            messageDiv.textContent = 'No files selected!';
+            return;
+        }
+
+        // Loop through each file and upload
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // S3 upload parameters
+            const params = {
+                Bucket: 'au-web-project-photoupload', // Your S3 Bucket Name
+                Key: 'uploads/' + file.name, // File path (uploads folder in S3)
+                Body: file,
+                ContentType: file.type,
+                ACL: 'public-read' // Make the file publicly accessible
+            };
+
+            // Upload to S3
+            s3.upload(params, function (err, data) {
+                if (err) {
+                    messageDiv.textContent = 'Error uploading file: ' + err.message;
+                    console.error('Error uploading file:', err);
+                } else {
+                    messageDiv.textContent = 'File uploaded successfully: ' + data.Location;
+                    console.log('File uploaded successfully:', data);
+                }
+            });
+        }
+    });
+});
