@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Upload to S3</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Images</title>
 </head>
 <body>
-  <h1>Upload Your Images</h1>
-  <form id="uploadForm">
-    <input type="file" id="fileInput" name="fileInput" multiple>
-    <button type="submit">Upload</button>
-  </form>
-  
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1317.0.min.js"></script>
-  <script src="upload.js"></script>
+    <h1>Upload Your Images</h1>
+
+    <!-- File upload form -->
+    <input type="file" id="file-upload" multiple>
+    <button id="upload-btn">Upload Files</button>
+
+    <!-- Success or Error Message -->
+    <div id="message"></div>
+
+    <!-- Load the script at the bottom for better performance -->
+    <script src="upload.js"></script>
 </body>
 </html>
