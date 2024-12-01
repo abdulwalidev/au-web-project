@@ -1,50 +1,46 @@
-// AWS S3 Bucket Configuration
-const bucketName = 'au-web-project-photoupload'; // Your S3 Bucket name
-const region = 'us-east-2'; // Your region (us-east-2 for Ohio)
-const accessKeyId = 'AKIARHQBNKIKY6EVWKWO'; // Your Access Key ID
-const secretAccessKey = 'SBa5np4lMIBSAYvBSCZKTEqOaOUhMlUGQhiAMK/b'; // Your Secret Access Key
-
-// Initialize AWS SDK
+// Initialize the Amazon Cognito credentials provider
 AWS.config.update({
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
-  region: region
+  region: "us-east-2", // your AWS region
+  credentials: new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: "YOUR_IDENTITY_POOL_ID" // replace with your identity pool ID
+  })
 });
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+  apiVersion: "2006-03-01",
+  params: { Bucket: "au-web-project-photoupload" } // replace with your S3 bucket name
+});
 
-function uploadFiles() {
-  const files = document.getElementById('fileInput').files;
-  if (files.length === 0) {
-    alert('Please select files to upload');
-    return;
+document.getElementById("uploadForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const files = document.getElementById("fileInput").files;
+  if (files.length > 0) {
+    uploadFiles(files);
+  } else {
+    alert("Please select a file to upload.");
   }
+});
 
-  // Loop through selected files
-  Array.from(files).forEach(file => {
+function uploadFiles(files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     const params = {
-      Bucket: bucketName,
-      Key: `uploads/${file.name}`, // Uploading to 'uploads' folder
+      Bucket: "au-web-project-photoupload", // replace with your S3 bucket name
+      Key: file.name,
       Body: file,
-      ACL: 'public-read', // Make the file publicly accessible
-      ContentType: file.type
+      ContentType: file.type,
+      ACL: "public-read" // makes the file publicly accessible
     };
 
-    // Check file size (optional, to make sure it's under 50MB)
-    if (file.size > 50 * 1024 * 1024) {
-      alert('File is too large. Please upload files smaller than 50MB.');
-      return;
-    }
-
-    // Upload the file to S3
     s3.upload(params, function(err, data) {
       if (err) {
-        console.error('Error uploading file:', err);
-        alert('Error uploading file. Please try again.');
+        console.log("Error uploading file:", err);
+        alert("Error uploading file.");
       } else {
-        console.log('File uploaded successfully:', data);
-        alert(`File uploaded successfully! View it at: ${data.Location}`);
+        console.log("File uploaded successfully:", data);
+        alert("File uploaded successfully!");
       }
     });
-  });
+  }
 }
