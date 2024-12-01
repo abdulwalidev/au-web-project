@@ -1,20 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Upload to S3</title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: skyblue;
+      text-align: center;
+    }
+    .upload-container {
+      background-color: black;
+      color: white;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    button {
+      background-color: white;
+      color: black;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: lightgrey;
+    }
+    input[type="file"] {
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Upload Your Image</h1>
-        <form id="uploadForm">
-            <input type="file" id="fileInput" name="file" accept="image/*" required>
-            <button type="submit">Upload</button>
-        </form>
-        <div id="statusMessage"></div>
-    </div>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1169.0.min.js"></script>
-    <script src="upload.js"></script>
+  <h1>Welcome to Image Upload</h1>
+  <div class="upload-container">
+    <h2>Upload Your Image</h2>
+    <input type="file" id="fileInput" multiple />
+    <br><br>
+    <button onclick="uploadFiles()">Upload Files</button>
+  </div>
+
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1415.0.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
