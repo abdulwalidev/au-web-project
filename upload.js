@@ -1,35 +1,50 @@
-// AWS S3 upload configuration
-const bucketName = 'au-web-project-photoupload';
-const region = 'us-east-2'; // Your S3 region
-const accessKey = 'AKIARHQBNKIKY6EVWKWO'; // Your AWS Access Key
-const secretKey = 'Sb5np4lMIBSAYvBSCZKTEqOaOUhMlUGQhiAMK/b'; // Your AWS Secret Key
+// AWS S3 Bucket Configuration
+const bucketName = 'au-web-project-photoupload'; // Your S3 Bucket name
+const region = 'us-east-2'; // Your region (us-east-2 for Ohio)
+const accessKeyId = 'AKIARHQBNKIKY6EVWKWO'; // Your Access Key ID
+const secretAccessKey = 'SBa5np4lMIBSAYvBSCZKTEqOaOUhMlUGQhiAMK/b'; // Your Secret Access Key
 
+// Initialize AWS SDK
 AWS.config.update({
-  region: region,
-  credentials: new AWS.Credentials(accessKey, secretKey)
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretAccessKey,
+  region: region
 });
 
 const s3 = new AWS.S3();
 
-// Handle file upload to S3
-document.getElementById("uploadForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  
-  const file = document.getElementById("fileInput").files[0];
-  const params = {
-    Bucket: bucketName,
-    Key: file.name, // You can customize the file name here
-    Body: file,
-    ACL: 'public-read' // Makes the file publicly accessible
-  };
+function uploadFiles() {
+  const files = document.getElementById('fileInput').files;
+  if (files.length === 0) {
+    alert('Please select files to upload');
+    return;
+  }
 
-  s3.upload(params, function (err, data) {
-    if (err) {
-      console.error("Error uploading file: ", err);
-      alert("Error uploading file.");
-    } else {
-      console.log("File uploaded successfully: ", data);
-      alert("File uploaded successfully!");
+  // Loop through selected files
+  Array.from(files).forEach(file => {
+    const params = {
+      Bucket: bucketName,
+      Key: `uploads/${file.name}`, // Uploading to 'uploads' folder
+      Body: file,
+      ACL: 'public-read', // Make the file publicly accessible
+      ContentType: file.type
+    };
+
+    // Check file size (optional, to make sure it's under 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      alert('File is too large. Please upload files smaller than 50MB.');
+      return;
     }
+
+    // Upload the file to S3
+    s3.upload(params, function(err, data) {
+      if (err) {
+        console.error('Error uploading file:', err);
+        alert('Error uploading file. Please try again.');
+      } else {
+        console.log('File uploaded successfully:', data);
+        alert(`File uploaded successfully! View it at: ${data.Location}`);
+      }
+    });
   });
-});
+}
