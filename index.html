@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Upload to S3</title>
+  <title>Upload Image to S3</title>
 </head>
 <body>
-  <h1>Welcome to Image Upload</h1>
-  <div>
-    <h2>Upload Your Image</h2>
-    <input type="file" id="fileInput" multiple />
-    <br><br>
-    <button onclick="uploadFiles()">Upload Files</button>
-  </div>
+  <h1>Upload Image to S3</h1>
 
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1415.0.min.js"></script>
-  <script src="app.js"></script>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" multiple>
+    <button type="submit">Upload</button>
+  </form>
+
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.45.min.js"></script>
+  <script src="upload.js"></script>
 </body>
 </html>
